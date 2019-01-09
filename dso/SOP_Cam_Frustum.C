@@ -73,6 +73,17 @@ SOP_Cam_Frustum::SOP_Cam_Frustum(OP_Network *net, const char *name, OP_Operator 
 SOP_Cam_Frustum::~SOP_Cam_Frustum() {}
 
 void 
+SOP_Cam_Frustum::buildPoly(GU_Detail *dst, UT_Vector3Array pts) {
+    GEO_PrimPoly *poly = GEO_PrimPoly::build(dst, pts.size(), GU_POLY_CLOSED);
+    
+    for (int i = 0; i < pts.size(); i++)
+    {
+        GA_Offset ptoff = poly->getPointOffset(i);
+        dst->setPos3(ptoff,pts[i]);
+    }
+}
+
+void 
 SOP_Cam_Frustum::buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *camera_node,fpreal scale) {
 
     fpreal now = context.getTime();
@@ -85,17 +96,14 @@ SOP_Cam_Frustum::buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *cam
 
     //UT_Vector3 up_right = UT_Vector3(aperture*0.5/focal,(resy*aperture)/(resx*aspect)*0.5/focal,-1);
     UT_Vector3 up_right = UT_Vector3(aperture*0.5,(resy*aperture)/(resx*aspect)*0.5,-focal);
+    // scale
     up_right *=scale/focal;
-    UT_Vector3 down_right = up_right;
-    down_right *= UT_Vector3(1,-1,1);
-    UT_Vector3 up_left = up_right;
-    up_left *= UT_Vector3(-1,1,1);
-    UT_Vector3 down_left = up_right;
-    down_left *= UT_Vector3(-1,-1,1);
 
-    UT_Vector3Array pos_up;
+    UT_Vector3 down_right = up_right * UT_Vector3(1,-1,1);
+    UT_Vector3 up_left = up_right * UT_Vector3(-1,1,1);
+    UT_Vector3 down_left = up_right * UT_Vector3(-1,-1,1);
     //(ch("../../cam1/resy")*ch("../../cam1/aperture")) / (ch("../../cam1/resx")*ch("../../cam1/aspect")) * 0.5
-    pos_up = {
+    UT_Vector3Array pos_up = (UT_Vector3Array) {
                         up_right,
                         up_left,
                         down_left,
@@ -103,25 +111,8 @@ SOP_Cam_Frustum::buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *cam
                         
     };
 
-    /*for (int i = 0; i < pos_up.size(); ++i)
-    {
-        UT_Vector3 vec_tmp = pos_up[i];
-        vec_tmp.normalize();
-        pos_up[i] = vec_tmp;
-    }*/
-
     //build poly
-    //GEO_PrimPoly *poly = GEO_PrimPoly::build(dst, pos_up.size(), GU_POLY_OPEN);
-    //GA_PrimitiveGroup *grp = gdp->newPrimitiveGroup(groupName);
-
-    GEO_PrimPoly *poly = GEO_PrimPoly::build(dst, pos_up.size(), GU_POLY_CLOSED);
-    //grp->add(prim);
-    
-    for (int i = 0; i < pos_up.size(); i++)
-    {
-        GA_Offset ptoff = poly->getPointOffset(i);
-        dst->setPos3(ptoff,pos_up[i]);
-    }
+    buildPoly(dst,std::move(pos_up));
 }
 
 OP_ERROR
