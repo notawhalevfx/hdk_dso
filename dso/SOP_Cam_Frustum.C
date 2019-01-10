@@ -73,7 +73,7 @@ SOP_Cam_Frustum::SOP_Cam_Frustum(OP_Network *net, const char *name, OP_Operator 
 SOP_Cam_Frustum::~SOP_Cam_Frustum() {}
 
 void 
-SOP_Cam_Frustum::buildPoly(GU_Detail *dst, UT_Vector3Array pts) {
+SOP_Cam_Frustum::buildPoly(GU_Detail *dst, UT_Vector3RArray &pts) {
     GEO_PrimPoly *poly = GEO_PrimPoly::build(dst, pts.size(), GU_POLY_CLOSED);
     
     for (int i = 0; i < pts.size(); i++)
@@ -88,11 +88,11 @@ SOP_Cam_Frustum::buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *cam
 
     fpreal now = context.getTime();
 
-    fpreal resx = camera_node->evalFloat("res",0, now);
-    fpreal resy = camera_node->evalFloat("res",1, now);
-    fpreal focal = camera_node->evalFloat("focal",0, now);
-    fpreal aperture = camera_node->evalFloat("aperture",0, now);
-    fpreal aspect = camera_node->evalFloat("aspect",0, now);
+    const fpreal resx = camera_node->evalFloat("res",0, now);
+    const fpreal resy = camera_node->evalFloat("res",1, now);
+    const fpreal focal = camera_node->evalFloat("focal",0, now);
+    const fpreal aperture = camera_node->evalFloat("aperture",0, now);
+    const fpreal aspect = camera_node->evalFloat("aspect",0, now);
 
     //UT_Vector3 up_right = UT_Vector3(aperture*0.5/focal,(resy*aperture)/(resx*aspect)*0.5/focal,-1);
     UT_Vector3 up_right = UT_Vector3(aperture*0.5,(resy*aperture)/(resx*aspect)*0.5,-focal);
@@ -103,7 +103,7 @@ SOP_Cam_Frustum::buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *cam
     UT_Vector3 up_left = up_right * UT_Vector3(-1,1,1);
     UT_Vector3 down_left = up_right * UT_Vector3(-1,-1,1);
     //(ch("../../cam1/resy")*ch("../../cam1/aperture")) / (ch("../../cam1/resx")*ch("../../cam1/aspect")) * 0.5
-    UT_Vector3Array pos_up = (UT_Vector3Array) {
+    UT_Vector3RArray pos_up = (UT_Vector3RArray) {
                         up_right,
                         up_left,
                         down_left,
@@ -112,7 +112,8 @@ SOP_Cam_Frustum::buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *cam
     };
 
     //build poly
-    buildPoly(dst,std::move(pos_up));
+    //buildPoly(dst,std::move(pos_up));
+    buildPoly(dst,pos_up);
 }
 
 OP_ERROR

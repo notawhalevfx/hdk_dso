@@ -16,7 +16,7 @@ protected:
     virtual ~SOP_Cam_Frustum();
 
     virtual OP_ERROR		 cookMySop(OP_Context &context);
-    void buildPoly(GU_Detail *dst, UT_Vector3Array pts);
+    void buildPoly(GU_Detail *dst, UT_Vector3RArray &pts);
     void buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *camera_node, fpreal scale);
 
 private:
