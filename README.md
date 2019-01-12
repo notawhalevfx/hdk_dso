@@ -6,14 +6,22 @@ This code can be not perfect. I write it for self-education and my production pu
 Welcome and feel free to contribute!
 
 ## Compilation
-    cd <houdini_path>
-    . houdini_setup
-    cd <folder_with_src>
-    hcustom ./SOP_Cam_Frustum.C
+```bash
+cd <houdini_path>
+. houdini_setup
+cd <folder_with_src>
+hcustom ./SOP_Cam_Frustum.C
+```
 
 ## SOP Frustum Camera
 Show Frustum camera
 
 ### Parameters
-    Near    Nearest distance from camera.
-    Far     Farest distance from camera.
+
+Name | Description
+--- | --- | ---
+Path to Camera | Path to camera
+Mode | Draw as **Polygons** or **Points**
+Consolidate Points | Consolidate points
+Near | Nearest distance from the camera.
+Far |Farest distance from the camera.
