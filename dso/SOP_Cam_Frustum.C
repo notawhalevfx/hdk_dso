@@ -36,26 +36,29 @@ newSopOperator(OP_OperatorTable *table)
 }
 
 static PRM_Name     PRMcameraPath("camPath", "Path to Camera");
+static PRM_Name     PRMMode("mode", "Mode");
+static PRM_Name     modeList[] =
+{
+    PRM_Name("polygon", "Polygon"),
+    PRM_Name("points", "Points"),
+    PRM_Name(0)
+};
+static PRM_ChoiceList   sopModeMenu(PRM_CHOICELIST_SINGLE, modeList);
+
+static PRM_Name     PRMConsolidatePoints("conPts", "Consolidate Points");
 static PRM_Name     PRMfarDistFromCam("farDistFromCam", "Far");
 static PRM_Name     PRMnearDistFromCam("nearDistFromCam", "Near");
-//				     ^^^^^^^^    ^^^^^^^^^^^^^^^
-//				     internal    descriptive version
-
 static PRM_Default camPathDefault(0,"/obj/cam1");
-static PRM_Default farDistFromCamDef(10);
-static PRM_Default nearDistFromCamDef(0.1);
-/*
-static PRM_Default	fiveDefault(5);		// Default to 5 divisions
-static PRM_Default	radiiDefaults[] = {
-			   PRM_Default(1),		// Outside radius
-			   PRM_Default(0.3)		// Inside radius
-			};*/
+//static PRM_Default farDistFromCamDef(10);
+//static PRM_Default nearDistFromCamDef(0);
 
 PRM_Template
 SOP_Cam_Frustum::myTemplateList[] = {
     PRM_Template(PRM_STRING,    PRM_TYPE_DYNAMIC_PATH,1, &PRMcameraPath, &camPathDefault, 0, 0, 0, &PRM_SpareData::objCameraPath),
-    PRM_Template(PRM_FLT,    1, &PRMnearDistFromCam, &nearDistFromCamDef, 0),
-    PRM_Template(PRM_FLT,    1, &PRMfarDistFromCam, &farDistFromCamDef, 0),
+    PRM_Template(PRM_ORD,    1, &PRMMode, 0, &sopModeMenu),
+    PRM_Template(PRM_TOGGLE,    1, &PRMConsolidatePoints, PRMoneDefaults),
+    PRM_Template(PRM_FLT,    1, &PRMnearDistFromCam, PRMzeroDefaults, 0),
+    PRM_Template(PRM_FLT,    1, &PRMfarDistFromCam, PRMtenDefaults, 0),
     PRM_Template(),
 };
 
@@ -83,8 +86,24 @@ SOP_Cam_Frustum::buildPoly(GU_Detail *dst, UT_Vector3RArray &pts) {
     }
 }
 
+bool
+SOP_Cam_Frustum::updateParmsFlags()
+{
+    fpreal  t = CHgetEvalTime();
+    bool    changed = SOP_Node::updateParmsFlags();
+    bool    use_cons;
+    UT_String mode;
+    MODE(mode,t);
+    use_cons = mode == "polygon";
+    // Disable Parameter
+    changed |= enableParm("conPts", use_cons);
+    // Hide Parameter
+    //changed |= setVisibleState("conPts", use_cons);
+    return changed;
+}
+
 void 
-SOP_Cam_Frustum::buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *camera_node,fpreal scale) {
+SOP_Cam_Frustum::buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *camera_node) {
 
     fpreal now = context.getTime();
 
@@ -95,25 +114,94 @@ SOP_Cam_Frustum::buildFrustum(GU_Detail *dst, OP_Context &context, OBJ_Node *cam
     const fpreal aspect = camera_node->evalFloat("aspect",0, now);
 
     //UT_Vector3 up_right = UT_Vector3(aperture*0.5/focal,(resy*aperture)/(resx*aspect)*0.5/focal,-1);
-    UT_Vector3 up_right = UT_Vector3(aperture*0.5,(resy*aperture)/(resx*aspect)*0.5,-focal);
-    // scale
-    up_right *=scale/focal;
-
-    UT_Vector3 down_right = up_right * UT_Vector3(1,-1,1);
-    UT_Vector3 up_left = up_right * UT_Vector3(-1,1,1);
-    UT_Vector3 down_left = up_right * UT_Vector3(-1,-1,1);
     //(ch("../../cam1/resy")*ch("../../cam1/aperture")) / (ch("../../cam1/resx")*ch("../../cam1/aspect")) * 0.5
-    UT_Vector3RArray pos_up = (UT_Vector3RArray) {
-                        up_right,
-                        up_left,
-                        down_left,
-                        down_right
-                        
-    };
+    //far frustum points
+    const UT_Vector3 up_right_far = UT_Vector3(aperture*0.5,(resy*aperture)/(resx*aspect)*0.5,-focal) * FARDISTFROMCAM(now) / focal;
+    const UT_Vector3 down_right_far = up_right_far * UT_Vector3(1,-1,1);
+    const UT_Vector3 up_left_far = up_right_far * UT_Vector3(-1,1,1);
+    const UT_Vector3 down_left_far = up_right_far * UT_Vector3(-1,-1,1);
 
-    //build poly
-    //buildPoly(dst,std::move(pos_up));
-    buildPoly(dst,pos_up);
+    //near frustum points
+    const UT_Vector3 up_right_near = UT_Vector3(aperture*0.5,(resy*aperture)/(resx*aspect)*0.5,-focal) * NEARDISTFROMCAM(now) / focal;
+    const UT_Vector3 down_right_near = up_right_near * UT_Vector3(1,-1,1);
+    const UT_Vector3 up_left_near = up_right_near * UT_Vector3(-1,1,1);
+    const UT_Vector3 down_left_near = up_right_near * UT_Vector3(-1,-1,1);
+
+    //get mode
+    UT_String mode;
+    MODE(mode,now);
+
+    if (mode == "polygon" ) {
+
+        // far
+        UT_Vector3RArray pos = (UT_Vector3RArray) {
+                            up_right_far,
+                            up_left_far,
+                            down_left_far,
+                            down_right_far,
+        };
+        buildPoly(dst,pos);
+
+        // near
+        pos = (UT_Vector3RArray) {
+                            down_left_near,
+                            up_left_near,
+                            up_right_near,
+                            down_right_near,
+        };
+        buildPoly(dst,pos);
+
+        // up
+        pos = (UT_Vector3RArray) {
+                            up_right_near,
+                            up_left_near,
+                            up_left_far,
+                            up_right_far,
+        };
+        buildPoly(dst,pos);
+
+        // down
+        pos = (UT_Vector3RArray) {
+                            down_left_near,
+                            down_right_near,
+                            down_right_far,
+                            down_left_far,
+        };
+        buildPoly(dst,pos);
+
+        // left
+        pos = (UT_Vector3RArray) {
+                            up_left_near,
+                            down_left_near,
+                            down_left_far,
+                            up_left_far,
+        };
+        buildPoly(dst,pos);
+
+        // right
+        pos = (UT_Vector3RArray) {
+                            down_right_near,
+                            up_right_near,
+                            up_right_far,
+                            down_right_far,
+        };
+        buildPoly(dst,pos);
+
+        // consolidate points
+        if (CONSOLIDATE(now))
+            gdp->fastConsolidatePoints(0);
+
+    } else if (mode == "points") {
+        GA_Offset off = gdp->appendPointBlock(8);
+        gdp->setPos3(off,down_right_near);
+        gdp->setPos3(off+1,up_right_near);
+        gdp->setPos3(off+2,up_right_far);
+        gdp->setPos3(off+3,down_right_far);
+        gdp->setPos3(off+4,down_left_near);
+        gdp->setPos3(off+5,up_left_near);
+        gdp->setPos3(off+6,up_left_far);
+        gdp->setPos3(off+7,down_left_far);
+    }
 }
 
 OP_ERROR
@@ -144,15 +232,7 @@ SOP_Cam_Frustum::cookMySop(OP_Context &context)
     gdp->clearAndDestroy();
 
     // build farest poly
-    buildFrustum(gdp,context,camera_node,FARDISTFROMCAM(now));
-
-    // build nearest poly
-    buildFrustum(gdp,context,camera_node,NEARDISTFROMCAM(now));
-
-    //reverse polygon
-    GA_Primitive *prim = gdp->getPrimitive(GA_Offset(1));
-    prim->reverse();
-
+    buildFrustum(gdp,context,camera_node);
 
     // get parent node transform
     UT_Matrix4 loc_tranform;
