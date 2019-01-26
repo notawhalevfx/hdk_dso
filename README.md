@@ -19,7 +19,7 @@ Show Frustum camera
 ### Parameters
 
 Name | Description
---- | --- | ---
+--- | ---
 Path to Camera | Path to camera
 Mode | Draw as **Polygons** or **Points**
 Consolidate Points | Consolidate points
