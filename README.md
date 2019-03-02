@@ -25,3 +25,13 @@ Mode | Draw as **Polygons** or **Points**
 Consolidate Points | Consolidate points
 Near | Nearest distance from the camera.
 Far |Farest distance from the camera.
+
+## SIM Sys Info
+Print information in a terminal about memory usage and time spent per time step. Useful to debug simulation on a render farm.
+At this moment support only **Linux**-based OS
+### Parameters
+
+Name | Description
+--- | ---
+Memory | Print memory usage information
+Swap | Print swap usage information
