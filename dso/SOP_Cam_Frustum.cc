@@ -1,4 +1,4 @@
-#include "SOP_Cam_Frustum.h"
+#include "SOP_Cam_Frustum.hh"
 
 #include <GU/GU_Detail.h>
 #include <GEO/GEO_PrimPoly.h>
