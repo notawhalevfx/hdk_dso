@@ -4,6 +4,7 @@
 
 #include <sys/sysinfo.h>
 
+#define BATCHMODEONLY "batchMode"
 #define SHOWMEMORY "printMemory"
 #define SHOWSWAP   "printSwap"
 #define SHOWCLOCK  "printClock"
@@ -12,6 +13,7 @@
 class SIM_SysInfo : public SIM_SingleSolver, 
                           public SIM_OptionsUser {
 public:
+    GETSET_DATA_FUNCS_B(BATCHMODEONLY, batchMode);
     GETSET_DATA_FUNCS_B(SHOWMEMORY, ShowMemory);
     GETSET_DATA_FUNCS_B(SHOWSWAP, ShowSwap);
     GETSET_DATA_FUNCS_B(SHOWCLOCK, ShowClock);

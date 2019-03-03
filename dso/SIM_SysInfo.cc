@@ -29,12 +29,13 @@ SIM_SysInfo::~SIM_SysInfo() {
 
 const SIM_DopDescription *
 SIM_SysInfo::getSysSimDescription() {
-
+    static PRM_Name theBatchMode(BATCHMODEONLY,"Work Only In Batch Mode");
     static PRM_Name theShowClock(SHOWCLOCK,"Clock");
     static PRM_Name theShowMemory(SHOWMEMORY,"Memory");
     static PRM_Name theShowSwap(SHOWSWAP,"Swap");
 
     static PRM_Template		 theTemplates[] = {
+        PRM_Template(PRM_TOGGLE, 1,&theBatchMode,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowClock,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowMemory,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowSwap,PRMoneDefaults),
@@ -85,6 +86,11 @@ SIM_SysInfo::solveSingleObjectSubclass(
     SIM_ObjectArray& feedback_to_objects,
     const SIM_Time& time_step,
     bool object_is_new) {
+
+    if (getbatchMode()) {
+        if (HOM().isUIAvailable())
+            return SIM_SOLVER_SUCCESS;
+    }
 
     cout << "Frame: " << engine.getSimulationFrame(engine.getSimulationTime()) << endl;
 
