@@ -35,8 +35,6 @@ SIM_SysInfo::getSysSimDescription() {
     static PRM_Template		 theTemplates[] = {
         PRM_Template(PRM_TOGGLE, 1,&theMemory,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theSwap,PRMoneDefaults),
-
-
 	    PRM_Template()
     };
 
@@ -59,6 +57,12 @@ void SIM_SysInfo::coutMemory(const long &tl,const long &fr) {
     cout << toGb(tl - fr) << " / "  << toGb(tl) << " Gb" << endl;
 }
 
+void SIM_SysInfo::memoryInfo() {
+    sysinfo(&sys_info);
+    if (getShowMemory()) coutMemory(sys_info.totalram,sys_info.freeram);
+    if (getShowSwap()) coutMemory(sys_info.totalswap,sys_info.freeswap);
+}
+
 SIM_Solver::SIM_Result 
 SIM_SysInfo::solveSingleObjectSubclass(
     SIM_Engine& engine,
@@ -67,13 +71,10 @@ SIM_SysInfo::solveSingleObjectSubclass(
     const SIM_Time& time_step,
     bool object_is_new) {
 
-    if (getShowMemory() && getShowSwap()) {
-        sysinfo(&sys_info);
-        if (getShowMemory()) coutMemory(sys_info.totalram,sys_info.freeram);
-        if (getShowSwap()) coutMemory(sys_info.totalswap,sys_info.freeswap);
-    }
+    cout << "Frame: " << engine.getSimulationFrame(engine.getSimulationTime()) << endl;
 
-    cout << setprecision(4) << engine.getSimulationTime() << " / "<< time_step << endl;
+    if (getShowMemory() && getShowSwap()) memoryInfo();
+
     cout << endl;
     return SIM_SOLVER_SUCCESS;
 }

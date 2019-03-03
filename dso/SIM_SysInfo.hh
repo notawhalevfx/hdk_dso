@@ -28,8 +28,8 @@ private:
 
     struct sysinfo sys_info;
     fpreal toGb(long val);
-
     void coutMemory(const long &tl,const long &fr);
+    void memoryInfo();
 
     DECLARE_STANDARD_GETCASTTOTYPE();
     DECLARE_DATAFACTORY(SIM_SysInfo,
