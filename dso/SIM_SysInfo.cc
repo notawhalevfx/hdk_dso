@@ -8,6 +8,7 @@
 #include <sys/sysinfo.h>
 #include <iostream>
 #include <iomanip>
+#include <chrono>
 
 #include <HOM/HOM_Module.h>
 
@@ -29,12 +30,14 @@ SIM_SysInfo::~SIM_SysInfo() {
 const SIM_DopDescription *
 SIM_SysInfo::getSysSimDescription() {
 
-    static PRM_Name theMemory(MEMORY,"Memory");
-    static PRM_Name theSwap(SWAP,"Swap");
+    static PRM_Name theShowClock(SHOWCLOCK,"Clock");
+    static PRM_Name theShowMemory(SHOWMEMORY,"Memory");
+    static PRM_Name theShowSwap(SHOWSWAP,"Swap");
 
     static PRM_Template		 theTemplates[] = {
-        PRM_Template(PRM_TOGGLE, 1,&theMemory,PRMoneDefaults),
-        PRM_Template(PRM_TOGGLE, 1,&theSwap,PRMoneDefaults),
+        PRM_Template(PRM_TOGGLE, 1,&theShowClock,PRMoneDefaults),
+        PRM_Template(PRM_TOGGLE, 1,&theShowMemory,PRMoneDefaults),
+        PRM_Template(PRM_TOGGLE, 1,&theShowSwap,PRMoneDefaults),
 	    PRM_Template()
     };
 
@@ -46,6 +49,18 @@ SIM_SysInfo::getSysSimDescription() {
 						   theTemplates);
 
     return &theDopDescription;
+}
+
+void SIM_SysInfo::timePerFrame() {
+    auto now = std::chrono::system_clock::now();
+    auto now_s = std::chrono::time_point_cast<std::chrono::seconds>(now);
+    auto value = now_s.time_since_epoch();
+    long cur = value.count();
+
+    long sec = cur - getClock();
+    long min = sec/60;
+    cout << "Time Per Frame: " << min << " min " << sec - min*60 << " sec" << endl;
+    setClock(cur);
 }
 
 fpreal SIM_SysInfo::toGb(long val) {
@@ -72,6 +87,8 @@ SIM_SysInfo::solveSingleObjectSubclass(
     bool object_is_new) {
 
     cout << "Frame: " << engine.getSimulationFrame(engine.getSimulationTime()) << endl;
+
+    if (getShowClock()) timePerFrame();
 
     if (getShowMemory() && getShowSwap()) memoryInfo();
 

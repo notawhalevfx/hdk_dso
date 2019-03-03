@@ -4,15 +4,18 @@
 
 #include <sys/sysinfo.h>
 
-#define MEMORY	        "memory"
-#define SWAP    	    "swap"
-
+#define SHOWMEMORY "printMemory"
+#define SHOWSWAP   "printSwap"
+#define SHOWCLOCK  "printClock"
+#define CLOCK       "clock"
 
 class SIM_SysInfo : public SIM_SingleSolver, 
                           public SIM_OptionsUser {
 public:
-    GETSET_DATA_FUNCS_B(MEMORY, ShowMemory);
-    GETSET_DATA_FUNCS_B(SWAP, ShowSwap);
+    GETSET_DATA_FUNCS_B(SHOWMEMORY, ShowMemory);
+    GETSET_DATA_FUNCS_B(SHOWSWAP, ShowSwap);
+    GETSET_DATA_FUNCS_B(SHOWCLOCK, ShowClock);
+    GETSET_DATA_FUNCS_I(CLOCK, Clock);
 protected:
     explicit	SIM_SysInfo(const SIM_DataFactory *factory);
     virtual		~SIM_SysInfo();
@@ -25,6 +28,8 @@ protected:
     );
 private:
     static const SIM_DopDescription* getSysSimDescription();
+
+    void timePerFrame();
 
     struct sysinfo sys_info;
     fpreal toGb(long val);

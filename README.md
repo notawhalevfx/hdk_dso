@@ -33,5 +33,6 @@ At this moment support only **Linux**-based OS
 
 Name | Description
 --- | ---
+Clock | Print spended time needed to solve step
 Memory | Print memory usage information
 Swap | Print swap usage information
