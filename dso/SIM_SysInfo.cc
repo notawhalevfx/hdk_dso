@@ -3,6 +3,7 @@
 #include <UT/UT_DSOVersion.h>
 #include <SIM/SIM_DopDescription.h>
 #include <PRM/PRM_Include.h>
+#include <PRM/PRM_SpareData.h>
 #include <SIM/SIM_Engine.h>
 
 #include <sys/sysinfo.h>
@@ -31,12 +32,18 @@ const SIM_DopDescription *
 SIM_SysInfo::getSysSimDescription() {
     static PRM_Name theBatchMode(BATCHMODEONLY,"Work Only In Batch Mode");
     static PRM_Name theShowClock(SHOWCLOCK,"Clock");
+
+    static PRM_Name theRam("ram","Ram");
+    static PRM_Default theRamSwitcher(2, "Ram");
+
     static PRM_Name theShowMemory(SHOWMEMORY,"Memory");
     static PRM_Name theShowSwap(SHOWSWAP,"Swap");
 
     static PRM_Template		 theTemplates[] = {
         PRM_Template(PRM_TOGGLE, 1,&theBatchMode,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowClock,PRMoneDefaults),
+        PRM_Template(PRM_SWITCHER, 1,&theRam,&theRamSwitcher, 0, 0, 0,
+                     &PRM_SpareData::groupTypeSimple),
         PRM_Template(PRM_TOGGLE, 1,&theShowMemory,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowSwap,PRMoneDefaults),
 	    PRM_Template()
