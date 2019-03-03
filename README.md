@@ -10,7 +10,9 @@ Welcome and feel free to contribute!
 cd <houdini_path>
 . houdini_setup
 cd <folder_with_src>
-hcustom ./SOP_Cam_Frustum.C
+hcustom ./SOP_Cam_Frustum.cc
+...
+hcustom ./SOP_SysInfo.cc
 ```
 
 ## SOP Frustum Camera
