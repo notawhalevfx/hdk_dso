@@ -4,11 +4,13 @@
 
 #include <sys/sysinfo.h>
 
-#define BATCHMODEONLY "batchMode"
-#define SHOWMEMORY "printMemory"
-#define SHOWSWAP   "printSwap"
-#define SHOWCLOCK  "printClock"
-#define CLOCK       "clock"
+#define BATCHMODEONLY   "batchMode"
+#define SHOWMEMORY      "printMemory"
+#define SHOWSWAP        "printSwap"
+#define SHOWCLOCK       "printClock"
+#define CLOCK           "clock"
+
+#define FIELD     "field"
 
 class SIM_SysInfo : public SIM_SingleSolver, 
                           public SIM_OptionsUser {
@@ -18,6 +20,7 @@ public:
     GETSET_DATA_FUNCS_B(SHOWSWAP, ShowSwap);
     GETSET_DATA_FUNCS_B(SHOWCLOCK, ShowClock);
     GETSET_DATA_FUNCS_I(CLOCK, Clock);
+    GETSET_DATA_FUNCS_S(FIELD, Field);
 protected:
     explicit	SIM_SysInfo(const SIM_DataFactory *factory);
     virtual		~SIM_SysInfo();
@@ -37,6 +40,8 @@ private:
     fpreal toGb(long val);
     void coutMemory(const long &tl,const long &fr);
     void memoryInfo();
+
+    void fieldsInfo(SIM_Object &obj);
 
     DECLARE_STANDARD_GETCASTTOTYPE();
     DECLARE_DATAFACTORY(SIM_SysInfo,

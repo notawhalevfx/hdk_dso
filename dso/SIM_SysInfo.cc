@@ -13,6 +13,8 @@
 
 #include <HOM/HOM_Module.h>
 
+#include <SIM/SIM_ScalarField.h>
+
 using namespace std;
 
 void
@@ -39,6 +41,9 @@ SIM_SysInfo::getSysSimDescription() {
     static PRM_Name theShowMemory(SHOWMEMORY,"Memory");
     static PRM_Name theShowSwap(SHOWSWAP,"Swap");
 
+    static PRM_Name theField(FIELD,"Field");
+    static PRM_Default theFieldDefault(0,"density");
+
     static PRM_Template		 theTemplates[] = {
         PRM_Template(PRM_TOGGLE, 1,&theBatchMode,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowClock,PRMoneDefaults),
@@ -46,6 +51,8 @@ SIM_SysInfo::getSysSimDescription() {
                      &PRM_SpareData::groupTypeSimple),
         PRM_Template(PRM_TOGGLE, 1,&theShowMemory,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowSwap,PRMoneDefaults),
+
+        PRM_Template(PRM_STRING, 1,&theField,&theFieldDefault),
 	    PRM_Template()
     };
 
@@ -103,6 +110,19 @@ void SIM_SysInfo::memoryInfo() {
     if (getShowSwap()) coutMemory(swap_total,swap_ava);
 }
 
+void SIM_SysInfo::fieldsInfo(SIM_Object &obj) {
+    SIM_ScalarField *field = SIM_DATA_GET(obj, 
+                        getField(), 
+                        SIM_ScalarField);
+    if (field) {
+        cout << endl;
+        cout << getField() << endl;
+        cout << "vs: " << field->getVoxelSize()[0] << " "; 
+        cout << "div: " << setprecision(0) << field->getDivisions() << " ";
+        cout << "nv: " << field->getTotalVoxels() << endl;
+    }
+}
+
 SIM_Solver::SIM_Result 
 SIM_SysInfo::solveSingleObjectSubclass(
     SIM_Engine& engine,
@@ -121,6 +141,8 @@ SIM_SysInfo::solveSingleObjectSubclass(
     if (getShowClock()) timePerFrame();
 
     if (getShowMemory() && getShowSwap()) memoryInfo();
+
+    fieldsInfo(object);
 
     cout << endl;
     return SIM_SOLVER_SUCCESS;
