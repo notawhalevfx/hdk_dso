@@ -1,5 +1,5 @@
 # hdk_dso
-Some My Houdini HDK DSO Plugins. 
+My Houdini HDK DSO Plugins. 
 
 This code can be not perfect. I write it for self-education and my production purpose. If somebody has any ideas, fixes, etc contact me or push your code.
 
