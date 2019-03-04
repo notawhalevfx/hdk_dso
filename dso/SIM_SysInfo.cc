@@ -72,7 +72,7 @@ void SIM_SysInfo::timePerFrame() {
 }
 
 fpreal SIM_SysInfo::toGb(long val) {
-    return static_cast<fpreal>(val)/1024/1024/1024;
+    return static_cast<fpreal>(val)/(1024*1024);
 }
 
 void SIM_SysInfo::coutMemory(const long &tl,const long &fr) {
@@ -81,9 +81,26 @@ void SIM_SysInfo::coutMemory(const long &tl,const long &fr) {
 }
 
 void SIM_SysInfo::memoryInfo() {
-    sysinfo(&sys_info);
-    if (getShowMemory()) coutMemory(sys_info.totalram,sys_info.freeram);
-    if (getShowSwap()) coutMemory(sys_info.totalswap,sys_info.freeswap);
+    long mem_total, mem_ava, swap_total, swap_ava;
+    string token;
+    std::ifstream file("/proc/meminfo");
+    while(file >> token) {
+        if(token == "MemTotal:") {
+            file >> mem_total;
+        } else if (token == "MemAvailable:") {
+            file >> mem_ava;
+        }
+        if(token == "SwapTotal:") {
+            file >> swap_total;
+        } else if (token == "SwapFree:") {
+            file >> swap_ava;
+        }
+        file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    }
+    file.close();
+
+    if (getShowMemory()) coutMemory(mem_total,mem_ava);
+    if (getShowSwap()) coutMemory(swap_total,swap_ava);
 }
 
 SIM_Solver::SIM_Result 
