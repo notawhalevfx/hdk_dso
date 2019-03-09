@@ -44,6 +44,7 @@ private:
     void memoryInfo();
 
     void fieldsInfo(SIM_Object &obj);
+    template<typename T> void printFieldInfo(const T &field);
 
     DECLARE_STANDARD_GETCASTTOTYPE();
     DECLARE_DATAFACTORY(SIM_SysInfo,

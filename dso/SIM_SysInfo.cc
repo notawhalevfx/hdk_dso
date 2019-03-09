@@ -14,6 +14,8 @@
 #include <HOM/HOM_Module.h>
 
 #include <SIM/SIM_ScalarField.h>
+#include <SIM/SIM_VectorField.h>
+#include <SIM/SIM_MatrixField.h>
 
 using namespace std;
 
@@ -110,16 +112,32 @@ void SIM_SysInfo::memoryInfo() {
     if (getShowSwap()) coutMemory("Swap:",swap_total,swap_ava);
 }
 
-void SIM_SysInfo::fieldsInfo(SIM_Object &obj) {
-    SIM_ScalarField *field = SIM_DATA_GET(obj, 
-                        getField(), 
-                        SIM_ScalarField);
-    if (field) {
+template<typename T>
+void SIM_SysInfo::printFieldInfo(const T &field)
+{
         cout << endl;
         cout << getField() << endl;
         cout << "vs: " << field->getVoxelSize()[0] << " "; 
         cout << "div: " << setprecision(0) << field->getDivisions() << " ";
         cout << "nv: " << field->getTotalVoxels() << endl;
+}
+
+void SIM_SysInfo::fieldsInfo(SIM_Object &obj) {
+    SIM_ScalarField *sc_field = SIM_DATA_GET(obj, 
+                         getField(), 
+                         SIM_ScalarField);
+    SIM_VectorField *vec_field = SIM_DATA_GET(obj, 
+                            getField(), 
+                            SIM_VectorField);
+    SIM_MatrixField *mx_field = SIM_DATA_GET(obj, 
+                            getField(), 
+                            SIM_MatrixField);
+    if (sc_field) {
+        printFieldInfo<>(sc_field);
+    } else if (vec_field) {
+         printFieldInfo<>(vec_field);
+    } else if (mx_field) {
+         printFieldInfo<>(mx_field);
     }
 }
 
