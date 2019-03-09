@@ -2,6 +2,7 @@
 #include <SIM/SIM_OptionsUser.h>
 //#include <SIM/SIM_Utils.h>
 
+#include <string>
 
 #define BATCHMODEONLY   "batchMode"
 #define SHOWMEMORY      "printMemory"
@@ -10,6 +11,8 @@
 #define CLOCK           "clock"
 
 #define FIELD     "field"
+
+using namespace std;
 
 class SIM_SysInfo : public SIM_SingleSolver, 
                           public SIM_OptionsUser {
@@ -35,9 +38,9 @@ private:
 
     void timePerFrame();
 
-    struct sysinfo sys_info;
     fpreal toGb(long val);
-    void coutMemory(const long &tl,const long &fr);
+    void coutMemory(const string &mes,const long &tl,const long &fr);
+
     void memoryInfo();
 
     void fieldsInfo(SIM_Object &obj);

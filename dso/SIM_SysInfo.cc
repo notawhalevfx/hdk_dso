@@ -6,6 +6,7 @@
 #include <PRM/PRM_SpareData.h>
 #include <SIM/SIM_Engine.h>
 
+#include <string>
 #include <iostream>
 #include <iomanip>
 #include <chrono>
@@ -81,9 +82,9 @@ fpreal SIM_SysInfo::toGb(long val) {
     return static_cast<fpreal>(val)/(1024*1024);
 }
 
-void SIM_SysInfo::coutMemory(const long &tl,const long &fr) {
+void SIM_SysInfo::coutMemory(const string &mes,const long &tl,const long &fr) {
     cout << fixed << setprecision(2);
-    cout << toGb(tl - fr) << " / "  << toGb(tl) << " Gb" << endl;
+    cout << mes << "\t" << toGb(tl - fr) << " / "  << toGb(tl) << " Gb" << endl;
 }
 
 void SIM_SysInfo::memoryInfo() {
@@ -105,8 +106,8 @@ void SIM_SysInfo::memoryInfo() {
     }
     file.close();
 
-    if (getShowMemory()) coutMemory(mem_total,mem_ava);
-    if (getShowSwap()) coutMemory(swap_total,swap_ava);
+    if (getShowMemory()) coutMemory("Ram:",mem_total,mem_ava);
+    if (getShowSwap()) coutMemory("Swap:",swap_total,swap_ava);
 }
 
 void SIM_SysInfo::fieldsInfo(SIM_Object &obj) {
