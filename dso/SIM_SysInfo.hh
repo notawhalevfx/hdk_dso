@@ -2,7 +2,6 @@
 #include <SIM/SIM_OptionsUser.h>
 //#include <SIM/SIM_Utils.h>
 
-#include <sys/sysinfo.h>
 
 #define BATCHMODEONLY   "batchMode"
 #define SHOWMEMORY      "printMemory"

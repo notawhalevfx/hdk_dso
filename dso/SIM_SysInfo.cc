@@ -6,7 +6,6 @@
 #include <PRM/PRM_SpareData.h>
 #include <SIM/SIM_Engine.h>
 
-#include <sys/sysinfo.h>
 #include <iostream>
 #include <iomanip>
 #include <chrono>
