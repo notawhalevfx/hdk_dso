@@ -139,6 +139,13 @@ void SIM_SysInfo::fieldsInfo(SIM_Object &obj) {
     } else if (mx_field) {
          printFieldInfo<>(mx_field);
     }
+    // if (field) {
+    //     cout << endl;
+    //     cout << field->getField() << endl;
+    //     cout << "vs: " << field->getVoxelSize()[0] << " "; 
+    //     cout << "div: " << setprecision(0) << field->getDivisions() << " ";
+    //     cout << "nv: " << field->getTotalVoxels() << endl;
+    // }
 }
 
 SIM_Solver::SIM_Result 
