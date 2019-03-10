@@ -48,6 +48,7 @@ SIM_SysInfo::getSysSimDescription() {
 static PRM_Name     PRMMode(MODE, "Mode");
 static PRM_Name     modeList[] =
 {
+    PRM_Name("none", "None"),
     PRM_Name("field", "Field"),
     PRM_Name("bullet", "Bullet"),
     PRM_Name(0)
@@ -161,6 +162,7 @@ void SIM_SysInfo::bulletInfo(SIM_Object &obj) {
         GA_ROHandleI active_attr(gdp, GA_ATTRIB_POINT, "active");
         GA_ROHandleI blt_slp_attr(gdp, GA_ATTRIB_POINT, "bullet_sleeping");
 
+        cout << endl;
         cout << "Pieces: " << gdp->getNumPoints();
 
         if(active_attr.isValid() && blt_slp_attr.isValid()) {
@@ -196,10 +198,10 @@ SIM_SysInfo::solveSingleObjectSubclass(
 
     if (getShowMemory() && getShowSwap()) memoryInfo();
     switch (getDataMode()) {
-        case 0:
+        case 1:
             fieldsInfo(object);
             break;
-        case 1:
+        case 2:
             bulletInfo(object);
             break;
     }
