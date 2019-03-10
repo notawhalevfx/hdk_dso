@@ -17,6 +17,8 @@
 #include <SIM/SIM_VectorField.h>
 #include <SIM/SIM_MatrixField.h>
 
+#include <SIM/SIM_Geometry.h>
+
 using namespace std;
 
 void
@@ -43,6 +45,15 @@ SIM_SysInfo::getSysSimDescription() {
     static PRM_Name theShowMemory(SHOWMEMORY,"Memory");
     static PRM_Name theShowSwap(SHOWSWAP,"Swap");
 
+static PRM_Name     PRMMode(MODE, "Mode");
+static PRM_Name     modeList[] =
+{
+    PRM_Name("field", "Field"),
+    PRM_Name("bullet", "Bullet"),
+    PRM_Name(0)
+};
+static PRM_ChoiceList   modeMenu(PRM_CHOICELIST_SINGLE, modeList);
+
     static PRM_Name theField(FIELD,"Field");
     static PRM_Default theFieldDefault(0,"density");
 
@@ -54,6 +65,7 @@ SIM_SysInfo::getSysSimDescription() {
         PRM_Template(PRM_TOGGLE, 1,&theShowMemory,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowSwap,PRMoneDefaults),
 
+        PRM_Template(PRM_ORD,    1, &PRMMode, 0, &modeMenu),
         PRM_Template(PRM_STRING, 1,&theField,&theFieldDefault),
 	    PRM_Template()
     };
@@ -141,6 +153,30 @@ void SIM_SysInfo::fieldsInfo(SIM_Object &obj) {
     }
 }
 
+void SIM_SysInfo::bulletInfo(SIM_Object &obj) {
+    const SIM_Geometry *geo = obj.getGeometry();
+    if (geo) {
+        GU_DetailHandleAutoReadLock geo_gdp(geo->getGeometry());
+        const GU_Detail *gdp = geo_gdp.getGdp();
+        GA_ROHandleI active_attr(gdp, GA_ATTRIB_POINT, "active");
+        GA_ROHandleI blt_slp_attr(gdp, GA_ATTRIB_POINT, "bullet_sleeping");
+
+        cout << "Pieces: " << gdp->getNumPoints();
+
+        if(active_attr.isValid() && blt_slp_attr.isValid()) {
+            int num_act = 0, blt_slp=0;
+            for (GA_Iterator it(gdp->getPointRange()); !it.atEnd(); it.advance()) {
+                GA_Offset offset = it.getOffset();
+                num_act += active_attr.get(offset);
+                blt_slp += blt_slp_attr.get(offset);
+            }
+            cout << " Active: " << num_act;
+            cout << " Sleeping: " << blt_slp;
+        }
+        cout << endl;
+    }
+}
+
 SIM_Solver::SIM_Result 
 SIM_SysInfo::solveSingleObjectSubclass(
     SIM_Engine& engine,
@@ -159,8 +195,14 @@ SIM_SysInfo::solveSingleObjectSubclass(
     if (getShowClock()) timePerFrame();
 
     if (getShowMemory() && getShowSwap()) memoryInfo();
-
-    fieldsInfo(object);
+    switch (getDataMode()) {
+        case 0:
+            fieldsInfo(object);
+            break;
+        case 1:
+            bulletInfo(object);
+            break;
+    }
 
     cout << endl;
     return SIM_SOLVER_SUCCESS;

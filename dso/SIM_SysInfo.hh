@@ -10,7 +10,8 @@
 #define SHOWCLOCK       "printClock"
 #define CLOCK           "clock"
 
-#define FIELD     "field"
+#define MODE           "mode"
+#define FIELD           "field"
 
 using namespace std;
 
@@ -23,6 +24,7 @@ public:
     GETSET_DATA_FUNCS_B(SHOWCLOCK, ShowClock);
     GETSET_DATA_FUNCS_I(CLOCK, Clock);
     GETSET_DATA_FUNCS_S(FIELD, Field);
+    GETSET_DATA_FUNCS_I(MODE, DataMode);
 protected:
     explicit	SIM_SysInfo(const SIM_DataFactory *factory);
     virtual		~SIM_SysInfo();
@@ -45,6 +47,8 @@ private:
 
     void fieldsInfo(SIM_Object &obj);
     template<typename T> void printFieldInfo(const T &field);
+
+    void bulletInfo(SIM_Object &obj);
 
     DECLARE_STANDARD_GETCASTTOTYPE();
     DECLARE_DATAFACTORY(SIM_SysInfo,
