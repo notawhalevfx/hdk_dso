@@ -57,7 +57,7 @@ static PRM_ChoiceList   modeMenu(PRM_CHOICELIST_SINGLE, modeList);
 
     static PRM_Name theField(FIELD,"Field");
     static PRM_Default theFieldDefault(0,"density");
-
+    
     static PRM_Template		 theTemplates[] = {
         PRM_Template(PRM_TOGGLE, 1,&theBatchMode,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowClock,PRMoneDefaults),
@@ -126,8 +126,7 @@ void SIM_SysInfo::memoryInfo() {
 }
 
 template<typename T>
-void SIM_SysInfo::printFieldInfo(const T &field)
-{
+void SIM_SysInfo::printFieldInfo(const T &field) const {
         cout << endl;
         cout << getField() << endl;
         cout << "vs: " << field->getVoxelSize()[0] << " "; 
@@ -135,7 +134,7 @@ void SIM_SysInfo::printFieldInfo(const T &field)
         cout << "nv: " << field->getTotalVoxels() << endl;
 }
 
-void SIM_SysInfo::fieldsInfo(SIM_Object &obj) {
+void SIM_SysInfo::fieldsInfo(SIM_Object &obj) const {
     SIM_ScalarField *sc_field = SIM_DATA_GET(obj, 
                          getField(), 
                          SIM_ScalarField);
@@ -154,7 +153,7 @@ void SIM_SysInfo::fieldsInfo(SIM_Object &obj) {
     }
 }
 
-void SIM_SysInfo::bulletInfo(SIM_Object &obj) {
+void SIM_SysInfo::bulletInfo(SIM_Object &obj) const {
     const SIM_Geometry *geo = obj.getGeometry();
     if (geo) {
         GU_DetailHandleAutoReadLock geo_gdp(geo->getGeometry());

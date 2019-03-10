@@ -23,8 +23,8 @@ public:
     GETSET_DATA_FUNCS_B(SHOWSWAP, ShowSwap);
     GETSET_DATA_FUNCS_B(SHOWCLOCK, ShowClock);
     GETSET_DATA_FUNCS_I(CLOCK, Clock);
-    GETSET_DATA_FUNCS_S(FIELD, Field);
     GETSET_DATA_FUNCS_I(MODE, DataMode);
+    GETSET_DATA_FUNCS_S(FIELD, Field);
 protected:
     explicit	SIM_SysInfo(const SIM_DataFactory *factory);
     virtual		~SIM_SysInfo();
@@ -45,10 +45,10 @@ private:
 
     void memoryInfo();
 
-    void fieldsInfo(SIM_Object &obj);
-    template<typename T> void printFieldInfo(const T &field);
+    void fieldsInfo(SIM_Object &obj) const;
+    template<typename T> void printFieldInfo(const T &field) const;
 
-    void bulletInfo(SIM_Object &obj);
+    void bulletInfo(SIM_Object &obj) const;
 
     DECLARE_STANDARD_GETCASTTOTYPE();
     DECLARE_DATAFACTORY(SIM_SysInfo,
