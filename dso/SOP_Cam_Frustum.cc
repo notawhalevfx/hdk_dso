@@ -25,7 +25,7 @@ void
 newSopOperator(OP_OperatorTable *table)
 {
     table->addOperator(new OP_Operator(
-        "hdk_cam_frustum",                 // Internal name
+        "notawhale_hdk_cam_frustum",                 // Internal name
         "Camera Frustum",                     // UI name
         SOP_Cam_Frustum::myConstructor,    // How to build the SOP
         SOP_Cam_Frustum::myTemplateList,   // My parameters

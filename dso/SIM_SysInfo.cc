@@ -72,7 +72,7 @@ static PRM_ChoiceList   modeMenu(PRM_CHOICELIST_SINGLE, modeList);
     };
 
     static SIM_DopDescription	 theDopDescription(true,
-						   "hdk_sysinfo",
+						   "notawhale_hdk_sysinfo",
 						   "System Info",
 						   "SystemInfo",
 						   classname(),
