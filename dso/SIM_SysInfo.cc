@@ -80,6 +80,12 @@ static PRM_ChoiceList   modeMenu(PRM_CHOICELIST_SINGLE, modeList);
 
     return &theDopDescription;
 }
+void SIM_SysInfo::frameInfo(const SIM_Engine& eng) {
+    SIM_Time t = eng.getSimulationTime();
+    //eng.getSimulationFrame(t)
+    cout << defaultfloat << setprecision(2);
+    cout << "Frame: " << eng.getGlobalTime(t)/eng.getTimeStep() << endl;
+}
 
 void SIM_SysInfo::timePerFrame() {
     auto now = std::chrono::system_clock::now();
@@ -191,7 +197,7 @@ SIM_SysInfo::solveSingleObjectSubclass(
             return SIM_SOLVER_SUCCESS;
     }
 
-    cout << "Frame: " << engine.getSimulationFrame(engine.getSimulationTime()) << endl;
+    frameInfo(engine);
 
     if (getShowClock()) timePerFrame();
 

@@ -41,6 +41,8 @@ protected:
 private:
     static const SIM_DopDescription* getSysSimDescription();
 
+    void frameInfo(const SIM_Engine& engine);
+
     void timePerFrame();
 
     fpreal toGb(long val);
