@@ -1,3 +1,6 @@
+#ifndef __SIM_SYSINFO_HH__
+#define __SIM_SYSINFO_HH__
+
 #include <SIM/SIM_SingleSolver.h>
 #include <SIM/SIM_OptionsUser.h>
 //#include <SIM/SIM_Utils.h>
@@ -56,3 +59,5 @@ private:
                         "System Info",
                         getSysSimDescription());
 };
+
+#endif
