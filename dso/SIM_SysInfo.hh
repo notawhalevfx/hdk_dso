@@ -43,7 +43,7 @@ private:
 
     void frameInfo(const SIM_Engine& engine);
 
-    void timePerFrame();
+    void timePerFrame(const bool &obj_new);
 
     fpreal toGb(long val);
     void coutMemory(const string &mes,const long &tl,const long &fr);

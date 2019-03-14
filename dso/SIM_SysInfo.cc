@@ -87,11 +87,13 @@ void SIM_SysInfo::frameInfo(const SIM_Engine& eng) {
     cout << "Frame: " << eng.getGlobalTime(t)/eng.getTimeStep() << endl;
 }
 
-void SIM_SysInfo::timePerFrame() {
+void SIM_SysInfo::timePerFrame(const bool &obj_new) {
     auto now = std::chrono::system_clock::now();
     auto now_s = std::chrono::time_point_cast<std::chrono::seconds>(now);
     auto value = now_s.time_since_epoch();
     long cur = value.count();
+
+    if (obj_new) setClock(cur);
 
     long sec = cur - getClock();
     long min = sec/60;
@@ -199,7 +201,7 @@ SIM_SysInfo::solveSingleObjectSubclass(
 
     frameInfo(engine);
 
-    if (getShowClock()) timePerFrame();
+    if (getShowClock()) timePerFrame(object_is_new);
 
     if (getShowMemory() && getShowSwap()) memoryInfo();
     switch (getDataMode()) {
