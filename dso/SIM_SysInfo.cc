@@ -5,6 +5,7 @@
 #include <PRM/PRM_Include.h>
 #include <PRM/PRM_SpareData.h>
 #include <SIM/SIM_Engine.h>
+#include <SIM/SIM_Object.h>
 
 #include <string>
 #include <iostream>
@@ -169,7 +170,6 @@ void SIM_SysInfo::bulletInfo(SIM_Object &obj) const {
         GA_ROHandleI active_attr(gdp, GA_ATTRIB_POINT, "active");
         GA_ROHandleI blt_slp_attr(gdp, GA_ATTRIB_POINT, "bullet_sleeping");
 
-        cout << endl;
         cout << "Pieces: " << gdp->getNumPoints();
 
         if(active_attr.isValid() && blt_slp_attr.isValid()) {
@@ -186,13 +186,21 @@ void SIM_SysInfo::bulletInfo(SIM_Object &obj) const {
     }
 }
 
-SIM_Solver::SIM_Result 
-SIM_SysInfo::solveSingleObjectSubclass(
-    SIM_Engine& engine,
-    SIM_Object& object,
-    SIM_ObjectArray& feedback_to_objects,
-    const SIM_Time& time_step,
-    bool object_is_new) {
+SIM_Solver::SIM_Result SIM_SysInfo::solveSingleObjectSubclass(
+                    SIM_Engine& engine, SIM_Object& object,
+                    SIM_ObjectArray& feedback_to_objects,
+                    const SIM_Time& time_step,
+                    bool object_is_new) {
+    
+    return SIM_SOLVER_SUCCESS;
+    }
+
+SIM_Solver::SIM_Result SIM_SysInfo::solveObjectsSubclass(
+                    SIM_Engine &engine,
+					SIM_ObjectArray &objects,
+					SIM_ObjectArray &newobjects,
+					SIM_ObjectArray &feedbacktoobjects,
+					const SIM_Time &timestep) {
 
     if (getbatchMode()) {
         if (HOM().isUIAvailable())
@@ -200,17 +208,24 @@ SIM_SysInfo::solveSingleObjectSubclass(
     }
 
     frameInfo(engine);
-
-    if (getShowClock()) timePerFrame(object_is_new);
-
+    if (getShowClock()) timePerFrame(engine.getSimulationTime() == fpreal(0));
     if (getShowMemory() && getShowSwap()) memoryInfo();
-    switch (getDataMode()) {
-        case 1:
-            fieldsInfo(object);
-            break;
-        case 2:
-            bulletInfo(object);
-            break;
+    cout << endl;
+
+    SIM_ObjectArray obj_arr = objects;
+    obj_arr.merge(newobjects);
+
+    for( int i = 0; i < obj_arr.entries(); i++ ) {
+        SIM_Object &object = *obj_arr(i);
+        cout << object.getName() << endl;
+        switch (getDataMode()) {
+            case 1:
+                fieldsInfo(object);
+                break;
+            case 2:
+                bulletInfo(object);
+                break;
+        }
     }
 
     cout << endl;

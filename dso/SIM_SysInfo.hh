@@ -26,18 +26,24 @@ public:
     GETSET_DATA_FUNCS_B(SHOWSWAP, ShowSwap);
     GETSET_DATA_FUNCS_B(SHOWCLOCK, ShowClock);
     GETSET_DATA_FUNCS_I(CLOCK, Clock);
+    GETSET_DATA_FUNCS_S(OBJECTNAME, Object);
     GETSET_DATA_FUNCS_I(MODE, DataMode);
     GETSET_DATA_FUNCS_S(FIELD, Field);
 protected:
     explicit	SIM_SysInfo(const SIM_DataFactory *factory);
     virtual		~SIM_SysInfo();
     // This implements your own solver step
+    SIM_Result solveObjectsSubclass(SIM_Engine &engine,
+					SIM_ObjectArray &objects,
+					SIM_ObjectArray &newobjects,
+					SIM_ObjectArray &feedbacktoobjects,
+					const SIM_Time &timestep);
     SIM_Result solveSingleObjectSubclass(
         SIM_Engine& engine, SIM_Object& object,
         SIM_ObjectArray& feedback_to_objects,
         const SIM_Time& time_step,
         bool object_is_new
-    );
+    );    
 private:
     static const SIM_DopDescription* getSysSimDescription();
 
