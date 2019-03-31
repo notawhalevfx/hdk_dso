@@ -140,7 +140,6 @@ void SIM_SysInfo::memoryInfo() {
 
 template<typename T>
 void SIM_SysInfo::printFieldInfo(const T &field) const {
-        cout << endl;
         cout << getField() << endl;
         cout << "vs: " << field->getVoxelSize()[0] << " "; 
         cout << "div: " << setprecision(0) << field->getDivisions() << " ";
