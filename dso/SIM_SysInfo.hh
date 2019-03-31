@@ -13,7 +13,8 @@
 #define SHOWCLOCK       "printClock"
 #define CLOCK           "clock"
 
-#define MODE           "mode"
+#define OBJECTMASK      "objectmask"
+#define MODE            "mode"
 #define FIELD           "field"
 
 using namespace std;
@@ -26,7 +27,7 @@ public:
     GETSET_DATA_FUNCS_B(SHOWSWAP, ShowSwap);
     GETSET_DATA_FUNCS_B(SHOWCLOCK, ShowClock);
     GETSET_DATA_FUNCS_I(CLOCK, Clock);
-    GETSET_DATA_FUNCS_S(OBJECTNAME, Object);
+    GETSET_DATA_FUNCS_S(OBJECTMASK, ObjectMask);
     GETSET_DATA_FUNCS_I(MODE, DataMode);
     GETSET_DATA_FUNCS_S(FIELD, Field);
 protected:

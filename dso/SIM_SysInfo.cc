@@ -46,15 +46,18 @@ SIM_SysInfo::getSysSimDescription() {
     static PRM_Name theShowMemory(SHOWMEMORY,"Memory");
     static PRM_Name theShowSwap(SHOWSWAP,"Swap");
 
-static PRM_Name     PRMMode(MODE, "Mode");
-static PRM_Name     modeList[] =
-{
-    PRM_Name("none", "None"),
-    PRM_Name("field", "Field"),
-    PRM_Name("bullet", "Bullet"),
-    PRM_Name(0)
-};
-static PRM_ChoiceList   modeMenu(PRM_CHOICELIST_SINGLE, modeList);
+    static PRM_Name theObjectMask(OBJECTMASK,"Object Mask");
+    static PRM_Default theObjectMaskDefault(0,"*");
+
+    static PRM_Name     PRMMode(MODE, "Mode");
+    static PRM_Name     modeList[] = {
+        PRM_Name("none", "None"),
+        PRM_Name("field", "Field"),
+        PRM_Name("bullet", "Bullet"),
+        PRM_Name(0)
+    };
+
+    static PRM_ChoiceList   modeMenu(PRM_CHOICELIST_SINGLE, modeList);
 
     static PRM_Name theField(FIELD,"Field");
     static PRM_Default theFieldDefault(0,"density");
@@ -67,6 +70,7 @@ static PRM_ChoiceList   modeMenu(PRM_CHOICELIST_SINGLE, modeList);
         PRM_Template(PRM_TOGGLE, 1,&theShowMemory,PRMoneDefaults),
         PRM_Template(PRM_TOGGLE, 1,&theShowSwap,PRMoneDefaults),
 
+        PRM_Template(PRM_STRING,    1, &theObjectMask, &theObjectMaskDefault),
         PRM_Template(PRM_ORD,    1, &PRMMode, 0, &modeMenu),
         PRM_Template(PRM_STRING, 1,&theField,&theFieldDefault),
 	    PRM_Template()
@@ -212,8 +216,16 @@ SIM_Solver::SIM_Result SIM_SysInfo::solveObjectsSubclass(
     if (getShowMemory() && getShowSwap()) memoryInfo();
     cout << endl;
 
-    SIM_ObjectArray obj_arr = objects;
-    obj_arr.merge(newobjects);
+    SIM_DataFilterRootData  fil(getObjectMask());
+    SIM_ObjectArray obj_arr;
+    auto filtered_obj = [] (const SIM_DataFilterRootData &filter, const SIM_ObjectArray &objs) {
+        SIM_ObjectArray temp_objs;
+        objs.filter(filter, temp_objs);
+        return temp_objs;
+    };
+
+    obj_arr.merge(filtered_obj(fil,objects));
+    obj_arr.merge(filtered_obj(fil,newobjects));
 
     for( int i = 0; i < obj_arr.entries(); i++ ) {
         SIM_Object &object = *obj_arr(i);
