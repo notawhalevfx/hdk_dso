@@ -88,7 +88,7 @@ SIM_SysInfo::getSysSimDescription() {
 void SIM_SysInfo::frameInfo(const SIM_Engine& eng) {
     SIM_Time t = eng.getSimulationTime();
     //eng.getSimulationFrame(t)
-    cout << defaultfloat << setprecision(2);
+    cout << fixed << setprecision(2);
     cout << "Frame: " << eng.getGlobalTime(t)/eng.getTimeStep() << endl;
 }
 
