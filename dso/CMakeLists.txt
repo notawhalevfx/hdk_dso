@@ -4,6 +4,9 @@ project( My_HDK_Project )
 # Locate Houdini's libraries and header files.
 # Registers an imported library target named 'Houdini'.
 find_package( Houdini REQUIRED )
+houdini_get_default_install_dir( install_path )
+string( APPEND install_path "/dso/fs/" )
+
 # Add a library with two source files.
 set( cam_frustum SOP_Cam_Frustum )
 add_library( ${cam_frustum} SHARED
@@ -17,10 +20,18 @@ add_library( ${sim_sysinfo} SHARED
     SIM_SysInfo.hh
 )
 
+set ( fs_pipelinehelper FS_PipelineHelper )
+add_library( ${fs_pipelinehelper} SHARED
+    FS_PipelineHelper.cc
+    FS_PipelineHelper.hh
+)
+
 # Link against the Houdini libraries, and add required include directories and compile definitions.
 target_link_libraries( ${cam_frustum} Houdini )
 target_link_libraries( ${sim_sysinfo} Houdini )
+target_link_libraries( ${fs_pipelinehelper} Houdini )
 
 # Configure several common target properties, such as its output directory.
 houdini_configure_target( ${cam_frustum} )
 houdini_configure_target( ${sim_sysinfo} )
+houdini_configure_target( ${fs_pipelinehelper} ${install_path} )

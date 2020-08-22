@@ -14,6 +14,7 @@ hcustom ./SOP_Cam_Frustum.cc
 ...
 hcustom ./SOP_SysInfo.cc
 ```
+or use just use Cmake
 
 ## SOP Frustum Camera
 Show Frustum camera
@@ -42,3 +43,6 @@ Swap | Print swap usage information
 Objects Mask | Mask for objects
 Mode | None - don't print additional information<br>Field - print information about field<br>Bullet - print inforamtion about pack bullet object
 Field | Name of field to print information
+
+## FS_PipelineHelper
+An example of, how can be used abstract paths to read/write files inside Houdini. After compilation move FS_PipileineHelper to .../dso/fs/ if it didn't happen automatically.
