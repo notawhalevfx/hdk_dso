@@ -1,8 +1,7 @@
-# Specify the minimum required version of CMake to build the project.
-cmake_minimum_required( VERSION 3.6 )
-project( My_HDK_Project )
 # Locate Houdini's libraries and header files.
 # Registers an imported library target named 'Houdini'.
+list( APPEND CMAKE_PREFIX_PATH "$ENV{HFS}/toolkit/cmake" )
+
 find_package( Houdini REQUIRED )
 houdini_get_default_install_dir( install_path )
 string( APPEND install_path "/dso/fs/" )

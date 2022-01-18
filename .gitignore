@@ -32,5 +32,6 @@
 *.out
 *.app
 
-dso/examples/
+src/examples/
 build/
+backup/
