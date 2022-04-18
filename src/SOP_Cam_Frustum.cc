@@ -17,16 +17,6 @@
 
 namespace HDK_notawhale {
 
-void newSopOperator(OP_OperatorTable *table) {
-  table->addOperator(new OP_Operator("notawhale_hdk_cam_frustum",     // Internal name
-                                     "Camera Frustum",                // UI name
-                                     SOP_Cam_Frustum::myConstructor,  // How to build the SOP
-                                     SOP_Cam_Frustum::myTemplateList, // My parameters
-                                     0,                               // Min # of sources
-                                     0,                               // Max # of sources
-                                     0, OP_FLAG_GENERATOR));
-}
-
 static PRM_Name PRMcameraPath("camPath", "Path to Camera");
 static PRM_Name PRMMode("mode", "Mode");
 static PRM_Name modeList[] = {PRM_Name("polygon", "Polygon"), PRM_Name("points", "Points"),
@@ -238,3 +228,17 @@ SOP_Cam_Frustum::cookMySop(OP_Context &context) {
 }
 
 } // namespace HDK_notawhale
+
+void newSopOperator(OP_OperatorTable *table) {
+  OP_Operator *op = new OP_Operator("notawhale_hdk_cam_frustum",     // Internal name
+                                     "Camera Frustum",                // UI name
+                                     HDK_notawhale::SOP_Cam_Frustum::myConstructor,  // How to build the SOP
+                                     HDK_notawhale::SOP_Cam_Frustum::myTemplateList, // My parameters
+                                     0,                               // Min # of sources
+                                     0,                               // Max # of sources
+                                     0, OP_FLAG_GENERATOR);
+  op->setOpTabSubMenuPath("notawhale");
+
+  table->addOperator(op);
+    
+}
