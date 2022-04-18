@@ -16,7 +16,7 @@ hcustom ./SOP_SysInfo.cc
 ```
 or use just use Cmake
 
-## SOP Frustum Camera
+## SOP Frustum Camera (SOP)
 Show Frustum camera
 
 ### Parameters
@@ -29,8 +29,8 @@ Consolidate Points | Consolidate points
 Near | Nearest distance from the camera.
 Far |Farest distance from the camera.
 
-## SIM Sys Info
-Print information in a terminal about memory usage and time spent per time step. Useful to debug simulation on a render farm.
+## SIM Sys Info (DOP)
+Print memory usage and time spent per time step into a terminal. Useful to debug simulation on a render farm.
 At this moment support only **Linux**-based OS
 ### Parameters
 
@@ -46,3 +46,12 @@ Field | Name of field to print information
 
 ## FS_PipelineHelper
 An example of, how can be used abstract paths to read/write files inside Houdini. After compilation move FS_PipileineHelper to .../dso/fs/ if it didn't happen automatically.
+
+## Fetch Pack Transform (OBJ)
+Fetch transformation from Alembic, USD, Pack and etc geometry on Object level.
+
+### Parameters
+Name | Description
+--- | ---
+Path To Geometry | Path to Geometry to get transformation.
+Select Path | Primitive path attribute to get transforms.
