@@ -25,12 +25,21 @@ add_library( ${fs_pipelinehelper} SHARED
     FS_PipelineHelper.hh
 )
 
+set ( obj_fetchpacktransform OBJ_FetchPackTransform )
+add_library( ${obj_fetchpacktransform} SHARED
+    OBJ_FetchPackTransform.cc
+    OBJ_FetchPackTransform.hh
+)
+
 # Link against the Houdini libraries, and add required include directories and compile definitions.
 target_link_libraries( ${cam_frustum} Houdini )
 target_link_libraries( ${sim_sysinfo} Houdini )
 target_link_libraries( ${fs_pipelinehelper} Houdini )
+target_link_libraries( ${obj_fetchpacktransform} Houdini )
 
 # Configure several common target properties, such as its output directory.
 houdini_configure_target( ${cam_frustum} )
 houdini_configure_target( ${sim_sysinfo} )
 houdini_configure_target( ${fs_pipelinehelper} ${install_path} )
+houdini_configure_target( ${obj_fetchpacktransform})
+houdini_configure_target( ${sop_vdb_deform_by_path} )
